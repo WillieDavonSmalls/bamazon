@@ -16,15 +16,15 @@ var connection = mysql.createConnection({
 
 connection.connect(function(error){
     if (error) throw error;
-    console.log("connected as id "+ connection.threadid + "\n");
+    console.log("connected as id "+ connection.threadId + "\n");
 
 });
 
 function displayProducts(){
-    connection.query("SELECT name FROM products", function (err, res){
-        if(err) throw err;
+    connection.query("select item_id, product_name, department_name, price, stock_quantity from products", function (error, response){
+        if(error) throw error;
         
-        console.log(res);
+        console.log(response);
         connection.end();
     });
 }
