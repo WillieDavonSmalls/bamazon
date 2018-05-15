@@ -20,6 +20,7 @@ connection.connect(function(error){
 
 });
 
+//pull the products.  
 function displayProducts(){
     connection.query("select item_id, product_name, department_name, price, stock_quantity from products", function (error, response){
         if(error) throw error;
@@ -29,5 +30,6 @@ function displayProducts(){
     });
 }
 
+//call the function to display the 
 displayProducts();
 
