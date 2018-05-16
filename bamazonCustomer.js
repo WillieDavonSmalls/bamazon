@@ -1,6 +1,7 @@
 //npm packages
 var mysql = require("mysql");
-var inquirer = require('inquirer');
+// var inquirer = require('inquirer');
+var inquirer = require('inquirer-promise');
 
 //connection string
 var connection = mysql.createConnection({
@@ -86,8 +87,11 @@ var questions = [
         message: 'How many units?'
     }
 ];
-
-inquirer.prompt(questions, function(responses) {
+var itemId; 
+var numUnits; 
+inquirer.prompt(questions).then(responses => 
     console.log(responses.itemId, responses.numUnits);
-  });
+    console.log(itemid, numUnits);
+
+);
 
