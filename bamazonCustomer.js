@@ -73,3 +73,21 @@ function currentUnits(){
 
 //currentUnits();
 connection.end();
+
+var questions = [
+    {
+        type: 'input',
+        name: 'itemId',
+        message: 'What is item id interests you?'
+    },
+    {
+        type: 'input',
+        name: 'numUnits',
+        message: 'How many units?'
+    }
+];
+
+inquirer.prompt(questions, function(responses) {
+    console.log(responses.itemId, responses.numUnits);
+  });
+
