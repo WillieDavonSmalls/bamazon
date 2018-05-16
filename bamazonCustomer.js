@@ -1,10 +1,8 @@
-//npm package
-var mysql = require("promise-mysql");
-
+//npm packages
+var mysql = require("mysql");
 var inquirer = require('inquirer');
 
-
-
+//connection string
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -15,44 +13,63 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+//create connection
+connection.connect(function(error){
+    if (error) throw error;
+    //console.log("connected as id "+ connection.threadId + "\n");
+
+});
 
 //pull the products.  
 function displayProducts(){
-    return connection.then(function(con) {
-        var sqlQuery
-        return con.query("select item_id, product_name, department_name, price, stock_quantity from products");
-    })
-    .then(function(rows) {
-        console.log("Rows: ", rows);
-    });
-}
-
-//call the function to display the 
-displayProducts();
-
-
-var units;
-var current_unit;
-var updated_units;
-
-function currentUnits (item_id){
-    return connection.then(function(con) {
-
-        var sqlQueryy = {
-            sql: "select stock_quantity from products where item_id = ?",
-            values: [ item_id ]
-        };
-        return con.query(sqlQuery); //this returns the promise, which is the result of the query
-    })
-    .then(function (response){
+    connection.query("select item_id, product_name, department_name, price, stock_quantity from products", function (error, response){
+        if(error) throw error;
         
         console.log(response);
-        current_unit = response[0].stock_quantity;
+        connection.end();
+    });
+}
+
+//display the products
+//displayProducts();
+
+
+var units = 2;
+var item_id = 1; 
+
+//Primary SQL queries
+var sqlQuery = "SELECT product_name, price, stock_quantity FROM products WHERE item_id = ?"
+var sqlUpdate = "UPDATE products SET stock_quantity = ? WHERE item_id = ?"
+
+function currentUnits(){
+    
+    //SQL query to pull data 
+    connection.query(sqlQuery, [item_id], function (error, response){
+        var current_units;
+        var price;
+        var remaining_units; 
+        var product_name; 
+
+        if(error) throw error;
+        
+        current_units = response[0].stock_quantity;
+        price = response[0].price;
+
+        if (current_units >= units){
+            remaining_units = current_units - units; 
+            connection.query(sqlUpdate, [remaining_units, item_id], function(error, response){
+                if(error) throw error;
+                connection.end();
+            });
+            console.log('The Price For ' + units + ' of ' + product_name + ' is ' + '$' + price * units);
+        } 
+        else{
+            console.log('Insufficient quantity!');
+            connection.end();
+        } 
 
     });
 }
 
-currentUnits(1).then(function() {
-    console.log(current_unit);
-});
-
+//currentUnits();
+connection.end();
